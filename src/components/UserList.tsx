@@ -8,65 +8,82 @@
  *
  *   1. It only renders for Admins (ProtectedRoute + RoleGuard wrap the page).
  *   2. The data is fetched via the API — the backend already enforced
- *      `requirePermission('manage_users')` before returning the list.
- *   3. Action buttons (edit role, delete) are shown because the user
- *      must already be an Admin to be here.
+ *      `requirePermission('manage_users')` on the GET /api/users route.
  */
 
 'use client';
 
 import { useEffect, useState } from 'react';
-import api from '../lib/api';
-import { User, Role } from '../types';
+import api from '@/lib/api';
+import { User as UserType, Role } from '@/types';
+import {
+  Table, TableBody, TableCell, TableHead,
+  TableHeader, TableRow
+} from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Spinner } from '@/components/ui/spinner';
 
 interface UserListProps {
-  roles: Role[];  // passed from the server page
+  roles: Role[];
 }
 
 export function UserList({ roles }: UserListProps) {
-  const [users, setUsers] = useState<User[]>([]);
+  const [users, setUsers] = useState<UserType[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     api.get('/users')
       .then((res) => setUsers(res.data.users))
-      .catch(console.error)
+      .catch((err) => setError(err.response?.data?.message || 'Failed to load users'))
       .finally(() => setLoading(false));
   }, []);
 
   const handleRoleChange = async (userId: number, newRoleId: number) => {
     try {
       await api.patch(`/users/${userId}/role`, { role_id: newRoleId });
-      // Refresh the list
       const res = await api.get('/users');
       setUsers(res.data.users);
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Failed to update role');
+      setError(err.response?.data?.message || 'Failed to update role');
     }
   };
 
-  if (loading) return <p className="text-gray-600">Loading users...</p>;
+  if (loading) {
+    return (
+      <div className="space-y-4">
+        {[...Array(5)].map((_, i) => (
+          <Skeleton key={i} className="h-12 w-full" />
+        ))}
+      </div>
+    );
+  }
+
+  if (error) {
+    return <p className="text-destructive">{error}</p>;
+  }
 
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full border-collapse">
-        <thead>
-          <tr className="bg-gray-50">
-            <th className="text-left py-3 px-4 font-medium">ID</th>
-            <th className="text-left py-3 px-4 font-medium">Username</th>
-            <th className="text-left py-3 px-4 font-medium">Email</th>
-            <th className="text-left py-3 px-4 font-medium">Role</th>
-            <th className="text-left py-3 px-4 font-medium">Active</th>
-            <th className="text-left py-3 px-4 font-medium">Created</th>
-          </tr>
-        </thead>
-        <tbody>
+    <div className="rounded-md border">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>ID</TableHead>
+            <TableHead>Username</TableHead>
+            <TableHead>Email</TableHead>
+            <TableHead>Role</TableHead>
+            <TableHead>Active</TableHead>
+            <TableHead>Created</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
           {users.map((user) => (
-            <tr key={user.id} className="border-t">
-              <td className="py-3 px-4">{user.id}</td>
-              <td className="py-3 px-4 font-medium">{user.username}</td>
-              <td className="py-3 px-4">{user.email}</td>
-              <td className="py-3 px-4">
+            <TableRow key={user.id}>
+              <TableCell>{user.id}</TableCell>
+              <TableCell className="font-medium">{user.username}</TableCell>
+              <TableCell>{user.email}</TableCell>
+              <TableCell>
                 <select
                   value={user.role_id}
                   onChange={(e) => handleRoleChange(user.id, parseInt(e.target.value))}
@@ -78,19 +95,19 @@ export function UserList({ roles }: UserListProps) {
                     </option>
                   ))}
                 </select>
-              </td>
-              <td className="py-3 px-4">
-                <span className={user.is_active ? 'text-green-600' : 'text-red-600'}>
-                  {user.is_active ? 'Yes' : 'No'}
-                </span>
-              </td>
-              <td className="py-3 px-4 text-sm text-gray-500">
+              </TableCell>
+              <TableCell>
+                <Badge variant={user.is_active ? 'default' : 'secondary'}>
+                  {user.is_active ? 'Active' : 'Inactive'}
+                </Badge>
+              </TableCell>
+              <TableCell className="text-sm text-muted-foreground">
                 {new Date(user.created_at).toLocaleDateString()}
-              </td>
-            </tr>
+              </TableCell>
+            </TableRow>
           ))}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
     </div>
   );
 }

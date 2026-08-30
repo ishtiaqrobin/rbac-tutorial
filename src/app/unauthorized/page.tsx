@@ -5,30 +5,35 @@
 
 'use client';
 
-import Link from 'next/link';
+import { ShieldX } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { useAuth } from '@/components/AuthProvider';
+import Link from 'next/link';
 
 export default function UnauthorizedPage() {
   const { user } = useAuth();
 
   return (
-    <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
-      <div className="bg-red-50 border border-red-200 rounded-lg p-8">
-        <h1 className="text-3xl font-bold text-red-800 mb-4">
-          403 — Access Denied
-        </h1>
-        <p className="text-gray-600 mb-6">
-          {user
-            ? `You (${user.email}, role: ${user.role}) are authenticated but do not have the required permissions.`
-            : 'You must be logged in to view this page.'}
-        </p>
-        <Link
-          href="/dashboard"
-          className="inline-block px-6 py-2 bg-primary text-white rounded hover:bg-blue-700 transition"
-        >
-          Go to Dashboard
-        </Link>
-      </div>
+    <div className="min-h-screen flex items-center justify-center bg-background">
+      <Card className="border-destructive/50 max-w-md w-full">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-destructive">
+            <ShieldX className="h-5 w-5" />
+            403 — Access Denied
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <p className="text-sm text-muted-foreground">
+            {user
+              ? `You (${user.email}, role: ${user.role}) are authenticated but do not have the required permissions.`
+              : 'You must be logged in to view this page.'}
+          </p>
+          <Button asChild>
+            <Link href="/dashboard">Go to Dashboard</Link>
+          </Button>
+        </CardContent>
+      </Card>
     </div>
   );
 }

@@ -21,70 +21,70 @@ import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { PermissionGate } from '@/components/PermissionGate';
 import { RoleGuard } from '@/components/RoleGuard';
 import { useAuth } from '@/components/AuthProvider';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 
 export default function EditorPage() {
   return (
     <ProtectedRoute>
-      {/* Both Admin and Editor can access this page */}
       <RoleGuard allowedRoles={['admin', 'editor']}>
-        <EditorContent />
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle>Content Management</CardTitle>
+              <p className="text-sm text-muted-foreground">
+                Hello, you have access to this area.
+              </p>
+            </CardHeader>
+          </Card>
+
+          {/* Only users with "create_content" can see this */}
+          <PermissionGate permission="create_content">
+            <Card className="mb-6">
+              <CardHeader>
+                <CardTitle>Create New Article</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <form className="space-y-4">
+                  <Input placeholder="Title" />
+                  <Textarea placeholder="Body" rows={5} />
+                  <Button type="submit">Publish</Button>
+                </form>
+              </CardContent>
+            </Card>
+          </PermissionGate>
+
+          {/* Only users with "edit_content" can see this */}
+          <PermissionGate permission="edit_content">
+            <Card className="mb-6">
+              <CardHeader>
+                <CardTitle>Edit Existing Article</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">
+                  Select an article from the list below to edit.
+                </p>
+              </CardContent>
+            </Card>
+          </PermissionGate>
+
+          {/* Only users with "delete_content" can see this — i.e. Admin only */}
+          <PermissionGate permission="delete_content">
+            <Card className="border-destructive/50">
+              <CardHeader>
+                <CardTitle className="text-destructive">Danger Zone</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Button variant="destructive">
+                  Delete Selected Articles
+                </Button>
+              </CardContent>
+            </Card>
+          </PermissionGate>
+        </div>
       </RoleGuard>
     </ProtectedRoute>
-  );
-}
-
-function EditorContent() {
-  const { user } = useAuth();
-
-  return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <h1 className="text-3xl font-bold text-gray-900 mb-2">Content Management</h1>
-      <p className="text-gray-600 mb-6">
-        Hello, {user?.email}. Your role: {user?.role}
-      </p>
-
-      {/* Only users with "create_content" can see this */}
-      <PermissionGate permission="create_content">
-        <section className="mb-8 p-6 bg-white rounded-lg shadow">
-          <h2 className="text-xl font-semibold text-gray-800 mb-3">Create New Article</h2>
-          <form className="space-y-4">
-            <input
-              type="text"
-              placeholder="Title"
-              className="w-full px-3 py-2 border border-gray-300 rounded"
-            />
-            <textarea
-              placeholder="Body"
-              rows={5}
-              className="w-full px-3 py-2 border border-gray-300 rounded"
-            />
-            <button
-              type="submit"
-              className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-            >
-              Publish
-            </button>
-          </form>
-        </section>
-      </PermissionGate>
-
-      {/* Only users with "edit_content" can see this */}
-      <PermissionGate permission="edit_content">
-        <section className="mb-8 p-6 bg-white rounded-lg shadow">
-          <h2 className="text-xl font-semibold text-gray-800 mb-3">Edit Existing Article</h2>
-          <p className="text-gray-500">Select an article from the list below to edit.</p>
-        </section>
-      </PermissionGate>
-
-      {/* Only users with "delete_content" can see this — i.e. Admin only */}
-      <PermissionGate permission="delete_content">
-        <section className="p-6 bg-white rounded-lg shadow border-red-200">
-          <h2 className="text-xl font-semibold text-red-800 mb-3">Danger Zone</h2>
-          <button className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
-            Delete Selected Articles
-          </button>
-        </section>
-      </PermissionGate>
-    </div>
   );
 }

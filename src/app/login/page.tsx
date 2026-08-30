@@ -10,8 +10,8 @@
  *    signs a JWT, and returns { token, user }.
  * 5. apiLogin() stores the JWT in localStorage.
  * 6. We redirect to /dashboard.
- * 7. The dashboard page is wrapped in <ProtectedRoute>, which checks
- *    auth state on mount and redirects to /login if no user is found.
+ * 7. The dashboard layout wraps content in <ProtectedRoute>, which
+ *    checks auth state and redirects to /login if no user is found.
  */
 
 'use client';
@@ -19,6 +19,9 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/AuthProvider';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 
 export default function LoginPage() {
   const { login } = useAuth();
@@ -48,63 +51,56 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-20 px-4">
-      <div className="bg-white rounded-lg shadow-md p-8">
-        <h1 className="text-2xl font-bold text-center text-gray-900 mb-6">
-          RBAC Tutorial — Login
-        </h1>
+    <div className="min-h-screen flex items-center justify-center bg-background">
+      <Card className="w-full max-w-md">
+        <CardHeader>
+          <CardTitle className="text-2xl text-center">
+            RBAC Tutorial — Login
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {error && (
+            <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 rounded text-destructive text-sm">
+              {error}
+            </div>
+          )}
 
-        {error && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded text-red-700 text-sm">
-            {error}
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">Email</label>
+              <Input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1">Password</label>
+              <Input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
+
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? 'Logging in...' : 'Login'}
+            </Button>
+          </form>
+
+          <div className="mt-6 p-4 bg-muted rounded-lg">
+            <h3 className="font-semibold text-sm mb-2">Demo Accounts</h3>
+            <ul className="text-xs text-muted-foreground space-y-1">
+              <li>Admin → admin@example.com / Admin123!</li>
+              <li>Editor → editor@example.com / Editor123!</li>
+              <li>Viewer → viewer@example.com / Viewer123!</li>
+            </ul>
           </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Email
-            </label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-primary focus:outline-none"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Password
-            </label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-primary focus:outline-none"
-              required
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-2 bg-primary text-white rounded hover:bg-blue-700 transition disabled:opacity-50"
-          >
-            {loading ? 'Logging in...' : 'Login'}
-          </button>
-        </form>
-
-        <div className="mt-6 p-4 bg-gray-50 rounded text-xs text-gray-600">
-          <p className="font-semibold mb-1">Demo Credentials:</p>
-          <ul className="space-y-1">
-            <li>admin@example.com / Admin123!</li>
-            <li>editor@example.com / Editor123!</li>
-            <li>viewer@example.com / Viewer123!</li>
-          </ul>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

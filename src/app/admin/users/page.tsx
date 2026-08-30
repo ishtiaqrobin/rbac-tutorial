@@ -3,16 +3,9 @@
  *
  * EDUCATIONAL NOTE
  * ----------------
- * This page demonstrates the FULL RBAC flow on the frontend:
- *
- *   1. <ProtectedRoute> ensures the user is authenticated.
- *   2. <RoleGuard allowedRoles={['admin']}> ensures the user is an Admin.
- *      If not, RoleGuard renders its fallback (an "Access Denied" message).
- *
- *    If BOTH checks pass, we fetch the role list and the user list from
- *    the backend.  The backend independently enforced
- *    `requirePermission('manage_users')` on the GET /api/users route,
- *    so even if this guard were bypassed, the API would return 403.
+ * Wrapped in <ProtectedRoute> (auth check) + <RoleGuard allowedRoles={['admin']}>
+ * (role check).  The backend independently enforced
+ * `requirePermission('manage_users')` on the GET /api/users route.
  */
 
 'use client';
@@ -23,12 +16,13 @@ import { RoleGuard } from '@/components/RoleGuard';
 import { UserList } from '@/components/UserList';
 import api from '@/lib/api';
 import { Role } from '@/types';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Spinner } from '@/components/ui/spinner';
 
 export default function AdminUsersPage() {
   const [roles, setRoles] = useState<Role[]>([]);
 
   useEffect(() => {
-    // Fetch the list of roles for the role-assignment dropdown.
     api.get('/roles').then((res) => setRoles(res.data.roles));
   }, []);
 
@@ -36,11 +30,23 @@ export default function AdminUsersPage() {
     <ProtectedRoute>
       <RoleGuard allowedRoles={['admin']}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-6">User Management</h1>
-          <p className="text-gray-600 mb-6">
-            As an Admin you can view all users and reassign their roles.
-          </p>
-          <UserList roles={roles} />
+          <Card>
+            <CardHeader>
+              <CardTitle>User Management</CardTitle>
+              <p className="text-sm text-muted-foreground">
+                As an Admin you can view all users and reassign their roles.
+              </p>
+            </CardHeader>
+            <CardContent>
+              {roles.length > 0 ? (
+                <UserList roles={roles} />
+              ) : (
+                <div className="flex items-center justify-center py-8">
+                  <Spinner />
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </div>
       </RoleGuard>
     </ProtectedRoute>

@@ -22,11 +22,22 @@ import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { RoleGuard } from '@/components/RoleGuard';
 import api from '@/lib/api';
 import { Role, Permission } from '@/types';
+import {
+  Card, CardContent, CardHeader, CardTitle
+} from '@/components/ui/card';
+import {
+  Table, TableBody, TableCell, TableHead,
+  TableHeader, TableRow
+} from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Button } from '@/components/ui/button';
 
 export default function AdminRolesPage() {
   const [roles, setRoles] = useState<Role[]>([]);
   const [permissions, setPermissions] = useState<Permission[]>([]);
   const [loading, setLoading] = useState(true);
+  const [updating, setUpdating] = useState<number | null>(null);
 
   useEffect(() => {
     Promise.all([
@@ -40,7 +51,7 @@ export default function AdminRolesPage() {
   }, []);
 
   const togglePermission = async (roleId: number, permissionId: number) => {
-    // Optimistically update UI, then call the API.
+    setUpdating(roleId);
     const role = roles.find((r) => r.id === roleId);
     if (!role) return;
 
@@ -53,65 +64,90 @@ export default function AdminRolesPage() {
 
     try {
       await api.put(`/roles/${roleId}/permissions`, { permissionIds: newPermIds });
-      // Refresh roles
       const res = await api.get('/roles');
       setRoles(res.data.roles);
     } catch (err: any) {
       alert(err.response?.data?.message || 'Failed to update permissions');
+    } finally {
+      setUpdating(null);
     }
   };
 
-  if (loading) return <p className="max-w-6xl mx-auto py-8">Loading roles...</p>;
+  if (loading) {
+    return (
+      <ProtectedRoute>
+        <RoleGuard allowedRoles={['admin']}>
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <Card>
+              <CardHeader>
+                <Skeleton className="h-7 w-48" />
+                <Skeleton className="h-4 w-64 mt-1" />
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <Skeleton className="h-10 w-full" />
+                  <Skeleton className="h-64 w-full" />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </RoleGuard>
+      </ProtectedRoute>
+    );
+  }
 
   return (
     <ProtectedRoute>
       <RoleGuard allowedRoles={['admin']}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Roles &amp; Permissions</h1>
-          <p className="text-gray-600 mb-6">
-            Manage which permissions each role grants. Changes apply
-            to all users with that role instantly.
-          </p>
-
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="bg-gray-100">
-                  <th className="text-left py-3 px-4 font-medium">Role</th>
-                  {permissions.map((perm) => (
-                    <th key={perm.id} className="text-center py-3 px-2 font-medium text-xs text-gray-600">
-                      {perm.name}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {roles.map((role) => (
-                  <tr key={role.id} className="border-t">
-                    <td className="py-3 px-4 font-medium">{role.name}</td>
-                    {permissions.map((perm) => {
-                      const has = role.permissions?.some((p) => p.id === perm.id);
-                      return (
-                        <td key={perm.id} className="text-center py-3">
-                          <button
-                            onClick={() => togglePermission(role.id, perm.id)}
-                            className={
-                              has
-                                ? 'text-green-600 hover:text-green-800'
-                                : 'text-gray-300 hover:text-gray-500'
-                            }
-                            title={has ? 'Revoke' : 'Grant'}
-                          >
-                            {has ? '✓' : '✕'}
-                          </button>
-                        </td>
-                      );
-                    })}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <Card>
+            <CardHeader>
+              <CardTitle>Roles &amp; Permissions</CardTitle>
+              <p className="text-sm text-muted-foreground mt-1">
+                Manage which permissions each role grants. Changes apply
+                to all users with that role instantly.
+              </p>
+            </CardHeader>
+            <CardContent>
+              <div className="rounded-md border">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Role</TableHead>
+                      {permissions.map((perm) => (
+                        <TableHead key={perm.id} className="text-center text-xs">
+                          {perm.name}
+                        </TableHead>
+                      ))}
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {roles.map((role) => (
+                      <TableRow key={role.id}>
+                        <TableCell className="font-medium">{role.name}</TableCell>
+                        {permissions.map((perm) => {
+                          const has = role.permissions?.some((p) => p.id === perm.id);
+                          return (
+                            <TableCell key={perm.id} className="text-center">
+                              <Button
+                                variant={has ? 'ghost' : 'ghost'}
+                                size="sm"
+                                className={has ? 'text-green-600' : 'text-muted-foreground'}
+                                onClick={() => togglePermission(role.id, perm.id)}
+                                disabled={updating === role.id}
+                              >
+                                {has ? '✓' : '✕'}
+                              </Button>
+                            </TableCell>
+                          );
+                        })}
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </RoleGuard>
     </ProtectedRoute>

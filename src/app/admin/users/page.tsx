@@ -16,7 +16,12 @@ export default function AdminUsersPage() {
   const [roles, setRoles] = useState<Role[]>([]);
 
   useEffect(() => {
-    api.get('/roles').then((res) => setRoles(res.data.roles));
+    api.get('/roles')
+      .then((res) => {
+        const rolesList = res.data?.data?.roles || res.data?.roles || [];
+        setRoles(rolesList);
+      })
+      .catch(() => setRoles([]));
   }, []);
 
   return (

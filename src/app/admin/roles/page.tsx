@@ -20,15 +20,21 @@ export default function AdminRolesPage() {
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState<number | null>(null);
 
-  useEffect(() => {
+  const fetchMatrixData = () => {
     Promise.all([
       api.get('/roles'),
       api.get('/permissions')
     ]).then(([roleRes, permRes]) => {
-      setRoles(roleRes.data.roles);
-      setPermissions(permRes.data.permissions);
+      const rolesList = roleRes.data?.data?.roles || roleRes.data?.roles || [];
+      const permsList = permRes.data?.data?.permissions || permRes.data?.permissions || [];
+      setRoles(rolesList);
+      setPermissions(permsList);
       setLoading(false);
     });
+  };
+
+  useEffect(() => {
+    fetchMatrixData();
   }, []);
 
   const togglePermission = async (roleId: number, permissionId: number) => {
@@ -45,8 +51,7 @@ export default function AdminRolesPage() {
 
     try {
       await api.put(`/roles/${roleId}/permissions`, { permissionIds: newPermIds });
-      const res = await api.get('/roles');
-      setRoles(res.data.roles);
+      fetchMatrixData();
     } catch (err: any) {
       alert(err.response?.data?.message || 'Failed to update permissions');
     } finally {

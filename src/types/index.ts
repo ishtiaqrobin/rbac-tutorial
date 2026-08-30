@@ -21,34 +21,45 @@ export interface Permission {
 
 // ─── User ────────────────────────────────────────────────────────────────
 export interface User {
-  id: number;
-  username: string;
+  id: string | number;
+  name?: string;
+  username?: string;
   email: string;
-  role_id: number;
-  is_active: boolean;
-  created_at: string;
-  updated_at: string;
+  role_id?: number;
+  roleId?: number;
+  is_active?: boolean;
+  isActive?: boolean;
+  created_at?: string;
+  createdAt?: string;
+  updated_at?: string;
+  updatedAt?: string;
   role_name?: string;
   role?: string;
 }
 
-// ─── Auth response (from POST /api/auth/login) ───────────────────────────
+// ─── Auth response ───────────────────────────────────────────────────────
 export interface LoginResponse {
-  token: string;
+  accessToken?: string;
+  token?: string;
   user: {
-    id: number;
+    id: string | number;
+    name?: string;
+    username?: string;
     email: string;
     role: string;
+    roleId?: number;
     permissions: string[];
   };
 }
 
 // ─── Authenticated user object (stored in AuthContext) ─────────────────────
 export interface AuthUser {
-  id: number;
+  id: string | number;
   email: string;
-  username: string;
+  name?: string;
+  username?: string;
   role: string;
+  roleId?: number;
   permissions: string[];
 }
 

@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Custom styles for the RBAC tutorial.
+ * TailwindCSS utility classes handle most styling; this file
+ * is for any bespoke rules that are hard to express as utilities.
+ */

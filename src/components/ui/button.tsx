@@ -5,30 +5,32 @@ import { cn } from '@/lib/utils';
 
 const buttonVariants = cva(
   cn(
-    'inline-flex items-center justify-center rounded-md text-sm font-medium',
-    'transition-colors focus-visible:outline-none focus-visible:ring-2',
-    'focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none',
-    'disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4',
-    '[&_svg]:shrink-0'
+    'inline-flex items-center justify-center rounded-xl text-base font-bold font-kalam tracking-wide',
+    'transition-all duration-150 focus-visible:outline-none focus-visible:ring-2',
+    'focus-visible:ring-black disabled:pointer-events-none disabled:opacity-50',
+    '[&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0'
   ),
   {
     variants: {
       variant: {
-        default: 'bg-primary text-primary-foreground hover:bg-primary/90',
+        default:
+          'bg-[#f3b72b] text-black border-2 border-black shadow-[3px_3px_0px_0px_#000] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_#000] active:translate-x-[3px] active:translate-y-[3px] active:shadow-none',
         destructive:
-          'bg-destructive text-destructive-foreground hover:bg-destructive/90',
+          'bg-[#e05252] text-white border-2 border-black shadow-[3px_3px_0px_0px_#000] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_#000] active:translate-x-[3px] active:translate-y-[3px] active:shadow-none',
         outline:
-          'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
+          'border-2 border-black bg-white text-black shadow-[3px_3px_0px_0px_#000] hover:bg-amber-50 hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_#000]',
+        dashed:
+          'border-2 border-dashed border-black bg-transparent text-black hover:bg-black/5 hover:border-solid',
         secondary:
-          'bg-secondary text-secondary-foreground hover:bg-secondary/80',
-        ghost: 'hover:bg-accent hover:text-accent-foreground',
-        link: 'text-primary underline-offset-4 hover:underline',
+          'border-2 border-black bg-amber-100 text-black shadow-[2px_2px_0px_0px_#000] hover:bg-amber-200',
+        ghost: 'hover:bg-black/5 text-black hover:underline decoration-wavy decoration-[#e05252]',
+        link: 'text-[#e05252] underline decoration-wavy underline-offset-4 hover:opacity-80 p-0 h-auto font-bold',
       },
       size: {
-        default: 'h-10 px-4 py-2',
-        sm: 'h-9 rounded-md px-3',
-        lg: 'h-11 rounded-md px-8',
-        icon: 'h-10 w-10',
+        default: 'h-11 px-5 py-2',
+        sm: 'h-9 rounded-lg px-3.5 text-sm',
+        lg: 'h-13 rounded-2xl px-8 text-lg',
+        icon: 'h-10 w-10 rounded-xl',
       },
     },
     defaultVariants: {

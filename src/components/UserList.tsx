@@ -1,14 +1,5 @@
 /**
- * UserList.tsx — Admin user-management table
- *
- * EDUCATIONAL NOTE
- * ----------------
- * This component shows how the frontend uses RBAC to build an
- * admin UI:
- *
- *   1. It only renders for Admins (ProtectedRoute + RoleGuard wrap the page).
- *   2. The data is fetched via the API — the backend already enforced
- *      `requirePermission('manage_users')` on the GET /api/users route.
+ * UserList.tsx — Admin user-management table with Doodle Aesthetics
  */
 
 'use client';
@@ -22,7 +13,6 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Spinner } from '@/components/ui/spinner';
 
 interface UserListProps {
   roles: Role[];
@@ -54,44 +44,50 @@ export function UserList({ roles }: UserListProps) {
     return (
       <div className="space-y-4">
         {[...Array(5)].map((_, i) => (
-          <Skeleton key={i} className="h-12 w-full" />
+          <Skeleton key={i} className="h-12 w-full rounded-xl bg-amber-100/50" />
         ))}
       </div>
     );
   }
 
   if (error) {
-    return <p className="text-destructive">{error}</p>;
+    return (
+      <div className="p-4 border-2 border-black rounded-xl bg-red-100 text-[#e05252] font-bold text-base shadow-[2px_2px_0px_0px_#000]">
+        ⚠️ {error}
+      </div>
+    );
   }
 
   return (
-    <div className="rounded-md border">
+    <div className="font-kalam">
       <Table>
         <TableHeader>
           <TableRow>
             <TableHead>ID</TableHead>
             <TableHead>Username</TableHead>
-            <TableHead>Email</TableHead>
-            <TableHead>Role</TableHead>
-            <TableHead>Active</TableHead>
-            <TableHead>Created</TableHead>
+            <TableHead>Email Address</TableHead>
+            <TableHead>System Role</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead>Joined Date</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {users.map((user) => (
             <TableRow key={user.id}>
-              <TableCell>{user.id}</TableCell>
-              <TableCell className="font-medium">{user.username}</TableCell>
-              <TableCell>{user.email}</TableCell>
+              <TableCell className="font-bold">#{user.id}</TableCell>
+              <TableCell className="font-bold text-[#1a1a1a] flex items-center gap-2">
+                <span>👤</span> {user.username}
+              </TableCell>
+              <TableCell className="font-mono text-sm">{user.email}</TableCell>
               <TableCell>
                 <select
                   value={user.role_id}
                   onChange={(e) => handleRoleChange(user.id, parseInt(e.target.value))}
-                  className="border rounded px-2 py-1 text-sm"
+                  className="border-2 border-black rounded-xl px-3 py-1 bg-white font-bold text-sm shadow-[2px_2px_0px_0px_#000] focus:ring-2 focus:ring-[#f3b72b] outline-none cursor-pointer"
                 >
                   {roles.map((role) => (
                     <option key={role.id} value={role.id}>
-                      {role.name}
+                      {role.name.toUpperCase()}
                     </option>
                   ))}
                 </select>
@@ -101,7 +97,7 @@ export function UserList({ roles }: UserListProps) {
                   {user.is_active ? 'Active' : 'Inactive'}
                 </Badge>
               </TableCell>
-              <TableCell className="text-sm text-muted-foreground">
+              <TableCell className="text-sm font-medium text-gray-600">
                 {new Date(user.created_at).toLocaleDateString()}
               </TableCell>
             </TableRow>

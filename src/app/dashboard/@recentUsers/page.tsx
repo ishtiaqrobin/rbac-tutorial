@@ -1,18 +1,5 @@
 /**
- * @recentUsers/page.tsx — Parallel route: Recent Users panel
- *
- * EDUCATIONAL NOTE
- * ----------------
- * This is a PARALLEL ROUTE.  It lives in `@recentUsers/` and is
- * rendered as the `recentUsers` prop in the dashboard layout.
- *
- * The key property of parallel routes is INDEPENDENT LOADING:
- *   - If this component is slow (API call takes time), the main
- *     dashboard (children) is still fully interactive.
- *   - The loading.tsx in the dashboard folder shows a skeleton
- *     while this panel fetches data.
- *
- * This component is Admin-only; other roles see a friendly message.
+ * @recentUsers/page.tsx — Parallel route: Recent Users panel with Doodle aesthetics
  */
 
 'use client';
@@ -43,26 +30,26 @@ export default function RecentUsersPanel() {
     if (loading) {
       return (
         <div className="space-y-3">
-          <Skeleton className="h-12 w-full" />
-          <Skeleton className="h-12 w-full" />
-          <Skeleton className="h-12 w-full" />
+          <Skeleton className="h-12 w-full rounded-xl bg-amber-100/50" />
+          <Skeleton className="h-12 w-full rounded-xl bg-amber-100/50" />
+          <Skeleton className="h-12 w-full rounded-xl bg-amber-100/50" />
         </div>
       );
     }
 
     if (users.length === 0) {
-      return <p className="text-sm text-muted-foreground">No users found.</p>;
+      return <p className="text-base text-gray-500 font-kalam">No users registered yet.</p>;
     }
 
     return (
-      <div className="space-y-3">
+      <div className="space-y-3 font-kalam">
         {users.slice(0, 5).map((u) => (
-          <div key={u.id} className="flex items-center justify-between">
+          <div key={u.id} className="flex items-center justify-between p-3 border-2 border-black rounded-xl bg-amber-50/60 shadow-[2px_2px_0px_0px_#000]">
             <div>
-              <p className="font-medium text-sm">{u.username}</p>
-              <p className="text-xs text-muted-foreground">{u.email}</p>
+              <p className="font-bold text-base text-[#1a1a1a]">{u.username}</p>
+              <p className="text-xs text-gray-600 font-mono">{u.email}</p>
             </div>
-            <Badge variant={u.is_active ? 'default' : 'secondary'}>
+            <Badge variant={u.is_active ? 'default' : 'secondary'} className="text-xs">
               {u.is_active ? 'Active' : 'Inactive'}
             </Badge>
           </div>
@@ -75,28 +62,30 @@ export default function RecentUsersPanel() {
     <RoleGuard
       allowedRoles={['admin']}
       fallback={
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <ShieldX className="h-5 w-5 text-muted-foreground" />
-              Recent Users
+        <Card className="border-2 border-black shadow-[4px_4px_0px_0px_#000] rounded-2xl bg-white font-kalam">
+          <CardHeader className="bg-gray-100 border-b-2 border-black">
+            <CardTitle className="flex items-center gap-2 text-gray-700">
+              <ShieldX className="h-5 w-5 text-[#e05252]" />
+              Recent Users Panel
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground">
+          <CardContent className="pt-6">
+            <p className="text-base text-gray-600">
               {user
-                ? `Your role (${user.role}) does not have permission to view the user list.`
-                : 'You must be logged in to view this panel.'}
+                ? `Your current role (${user.role.toUpperCase()}) does not possess admin permission to view recent users.`
+                : 'Please log in as Admin to inspect registered system users.'}
             </p>
           </CardContent>
         </Card>
       }
     >
-      <Card>
-        <CardHeader>
-          <CardTitle>Recent Users</CardTitle>
+      <Card className="border-2 border-black shadow-[4px_4px_0px_0px_#000] rounded-2xl bg-white font-kalam">
+        <CardHeader className="bg-[#f3b72b]/20 border-b-2 border-black">
+          <CardTitle className="flex items-center gap-2 text-[#1a1a1a]">
+            <span>👥</span> Registered System Users
+          </CardTitle>
         </CardHeader>
-        <CardContent>{renderContent()}</CardContent>
+        <CardContent className="pt-6">{renderContent()}</CardContent>
       </Card>
     </RoleGuard>
   );

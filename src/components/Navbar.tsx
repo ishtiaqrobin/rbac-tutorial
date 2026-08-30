@@ -44,50 +44,119 @@ export function Navbar() {
   if (loading) return null;
 
   return (
-    <nav className="bg-card shadow-sm border-b">
+    <nav className="bg-[#fdfbf7] border-b-2 border-black sticky top-0 z-50 font-kalam">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16 items-center">
-          <Link href="/" className="text-xl font-bold text-foreground">
-            RBAC Tutorial
+        <div className="flex justify-between h-20 items-center">
+          {/* Logo Section */}
+          <Link href="/" className="flex items-center space-x-2 group">
+            <div className="w-10 h-10 rounded-xl bg-[#f3b72b] border-2 border-black flex items-center justify-center font-bold text-xl shadow-[3px_3px_0px_0px_#000] group-hover:rotate-6 transition-transform">
+              ⚡
+            </div>
+            <span className="text-2xl font-bold tracking-wide text-[#1a1a1a]">
+              CRAZY<span className="text-[#e05252]">8</span>
+            </span>
           </Link>
 
-          {user ? (
-            <div className="flex items-center space-x-6">
-              <Link href="/dashboard" className="text-muted-foreground hover:text-foreground transition-colors">
-                Dashboard
-              </Link>
-
-              <RoleGuard allowedRoles={['admin']}>
-                <Link href="/admin/users" className="text-muted-foreground hover:text-foreground transition-colors">
-                  Users
-                </Link>
-              </RoleGuard>
-
-              <RoleGuard allowedRoles={['admin']}>
-                <Link href="/admin/roles" className="text-muted-foreground hover:text-foreground transition-colors">
-                  Roles &amp; Permissions
-                </Link>
-              </RoleGuard>
-
-              <Badge variant={roleVariant[user.role] || 'outline'}>
-                {user.role.toUpperCase()}
-              </Badge>
-
-              <PermissionGate permission="manage_users">
-                <Button size="sm">
-                  Invite User
-                </Button>
-              </PermissionGate>
-
-              <Button variant="ghost" size="sm" onClick={handleLogout}>
-                Logout
-              </Button>
-            </div>
-          ) : (
-            <Link href="/login" className="text-muted-foreground hover:text-foreground transition-colors">
-              Login
+          {/* Navigation Links */}
+          <div className="hidden md:flex items-center space-x-6 text-base font-bold">
+            <Link 
+              href="/" 
+              className="text-[#1a1a1a] hover:text-[#e05252] hover:underline decoration-wavy decoration-[#e05252] underline-offset-4 transition-all"
+            >
+              HOME
             </Link>
-          )}
+            
+            {user && (
+              <>
+                <Link 
+                  href="/dashboard" 
+                  className="text-[#1a1a1a] hover:text-[#e05252] hover:underline decoration-wavy decoration-[#e05252] underline-offset-4 transition-all"
+                >
+                  DASHBOARD
+                </Link>
+
+                <RoleGuard allowedRoles={['admin']}>
+                  <Link 
+                    href="/admin/users" 
+                    className="text-[#1a1a1a] hover:text-[#e05252] hover:underline decoration-wavy decoration-[#e05252] underline-offset-4 transition-all"
+                  >
+                    USERS
+                  </Link>
+                </RoleGuard>
+
+                <RoleGuard allowedRoles={['admin']}>
+                  <Link 
+                    href="/admin/roles" 
+                    className="text-[#1a1a1a] hover:text-[#e05252] hover:underline decoration-wavy decoration-[#e05252] underline-offset-4 transition-all"
+                  >
+                    ROLES &amp; PERMISSIONS
+                  </Link>
+                </RoleGuard>
+              </>
+            )}
+          </div>
+
+          {/* Right Action Section */}
+          <div className="flex items-center space-x-3">
+            {user ? (
+              <>
+                {/* Role Badge (pill style matching language selector in mockup) */}
+                <div className="hidden sm:flex items-center space-x-1 border-2 border-black rounded-xl px-3 py-1 bg-white text-xs font-bold shadow-[2px_2px_0px_0px_#000]">
+                  <span>🌐</span>
+                  <span className="uppercase text-[#e05252]">{user.role}</span>
+                </div>
+
+                <PermissionGate permission="manage_users">
+                  <Button 
+                    variant="dashed"
+                    size="sm"
+                    className="hidden sm:inline-flex"
+                  >
+                    JOIN
+                  </Button>
+                </PermissionGate>
+
+                {/* Yellow Action Button */}
+                <Button 
+                  onClick={handleLogout}
+                  size="sm"
+                  className="bg-[#f3b72b] hover:bg-[#eab308] text-black font-bold border-2 border-black shadow-[3px_3px_0px_0px_#000] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_#000] transition-all rounded-xl px-4 py-1.5"
+                >
+                  LOGOUT
+                </Button>
+
+                {/* User Avatar Circle */}
+                <div 
+                  className="w-10 h-10 rounded-full border-2 border-black bg-white flex items-center justify-center font-bold text-sm shadow-[2px_2px_0px_0px_#000] text-[#1a1a1a]"
+                  title={user.email}
+                >
+                  👤
+                </div>
+              </>
+            ) : (
+              <>
+                <Link href="/login">
+                  <Button 
+                    variant="dashed" 
+                    size="sm"
+                  >
+                    JOIN
+                  </Button>
+                </Link>
+                <Link href="/login">
+                  <Button 
+                    size="sm"
+                    className="bg-[#f3b72b] hover:bg-[#eab308] text-black font-bold border-2 border-black shadow-[3px_3px_0px_0px_#000] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_#000] transition-all rounded-xl px-5 py-1.5"
+                  >
+                    START
+                  </Button>
+                </Link>
+                <div className="w-10 h-10 rounded-full border-2 border-black bg-white flex items-center justify-center font-bold text-sm shadow-[2px_2px_0px_0px_#000]">
+                  👤
+                </div>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </nav>

@@ -1,17 +1,5 @@
 /**
- * Login page
- *
- * EDUCATIONAL FLOW
- * ----------------
- * 1. User enters email + password into the form.
- * 2. `handleSubmit` calls `login()` from AuthContext.
- * 3. AuthContext → apiLogin() → POST /api/auth/login (Axios).
- * 4. Backend verifies the password (bcrypt), looks up role + permissions,
- *    signs a JWT, and returns { token, user }.
- * 5. apiLogin() stores the JWT in localStorage.
- * 6. We redirect to /dashboard.
- * 7. The dashboard layout wraps content in <ProtectedRoute>, which
- *    checks auth state and redirects to /login if no user is found.
+ * Login page — Handwritten Doodle Aesthetics with Quick Role Switcher
  */
 
 'use client';
@@ -50,57 +38,96 @@ export default function LoginPage() {
     }
   };
 
+  const setDemoAccount = (demoEmail: string, demoPass: string) => {
+    setEmail(demoEmail);
+    setPassword(demoPass);
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle className="text-2xl text-center">
-            RBAC Tutorial — Login
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {error && (
-            <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 rounded text-destructive text-sm">
-              {error}
+    <div className="min-h-[85vh] flex items-center justify-center px-4 py-12 font-kalam">
+      <div className="w-full max-w-md relative">
+        
+        {/* Sticky Note Accent on Top Left */}
+        <div className="absolute -top-4 -left-4 bg-[#fef08a] border-2 border-black shadow-[2px_2px_0px_0px_#000] px-3 py-1 font-bold text-xs -rotate-6 rounded-md z-10">
+          LOGIN FORM 🔐
+        </div>
+
+        <Card className="w-full border-2 border-black shadow-[6px_6px_0px_0px_#000] rounded-2xl bg-white">
+          <CardHeader className="bg-[#f3b72b]/20 border-b-2 border-black pt-8">
+            <CardTitle className="text-3xl text-center font-bold tracking-tight text-[#1a1a1a]">
+              CRAZY8 <span className="text-[#e05252]">RBAC</span> LOGIN
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="pt-6 space-y-6">
+            
+            {error && (
+              <div className="p-3 bg-red-100 border-2 border-black rounded-xl text-[#e05252] text-sm font-bold shadow-[2px_2px_0px_0px_#000]">
+                ⚠️ {error}
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label className="block text-base font-bold mb-1 text-[#1a1a1a]">Email Address</label>
+                <Input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="admin@example.com"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-base font-bold mb-1 text-[#1a1a1a]">Password</label>
+                <Input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  required
+                />
+              </div>
+
+              <Button type="submit" className="w-full text-lg py-3" disabled={loading}>
+                {loading ? '⚡ Authenticating...' : '🚀 Sign In to Account'}
+              </Button>
+            </form>
+
+            {/* Quick Demo Fill Selector */}
+            <div className="pt-4 border-t-2 border-black">
+              <h3 className="font-bold text-sm text-gray-700 mb-2 flex items-center gap-1">
+                <span>⚡</span> Select Demo Role to Auto-fill:
+              </h3>
+              <div className="grid grid-cols-3 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setDemoAccount('admin@example.com', 'Admin123!')}
+                  className="p-2 border-2 border-black rounded-xl bg-red-50 hover:bg-red-100 font-bold text-xs shadow-[2px_2px_0px_0px_#000] text-red-700 transition-transform active:translate-y-0.5"
+                >
+                  🔴 Admin
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setDemoAccount('editor@example.com', 'Editor123!')}
+                  className="p-2 border-2 border-black rounded-xl bg-blue-50 hover:bg-blue-100 font-bold text-xs shadow-[2px_2px_0px_0px_#000] text-blue-700 transition-transform active:translate-y-0.5"
+                >
+                  🔵 Editor
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setDemoAccount('viewer@example.com', 'Viewer123!')}
+                  className="p-2 border-2 border-black rounded-xl bg-emerald-50 hover:bg-emerald-100 font-bold text-xs shadow-[2px_2px_0px_0px_#000] text-emerald-700 transition-transform active:translate-y-0.5"
+                >
+                  🟢 Viewer
+                </button>
+              </div>
             </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium mb-1">Email</label>
-              <Input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-1">Password</label>
-              <Input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
-
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? 'Logging in...' : 'Login'}
-            </Button>
-          </form>
-
-          <div className="mt-6 p-4 bg-muted rounded-lg">
-            <h3 className="font-semibold text-sm mb-2">Demo Accounts</h3>
-            <ul className="text-xs text-muted-foreground space-y-1">
-              <li>Admin → admin@example.com / Admin123!</li>
-              <li>Editor → editor@example.com / Editor123!</li>
-              <li>Viewer → viewer@example.com / Viewer123!</li>
-            </ul>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

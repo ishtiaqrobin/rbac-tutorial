@@ -5,10 +5,10 @@ const Table = React.forwardRef<
   HTMLTableElement,
   React.HTMLAttributes<HTMLTableElement>
 >(({ className, ...props }, ref) => (
-  <div className="w-full overflow-auto">
+  <div className="w-full overflow-auto rounded-2xl border-2 border-black bg-white shadow-[4px_4px_0px_0px_#000] font-kalam">
     <table
       ref={ref}
-      className={cn('w-full caption-bottom text-sm', className)}
+      className={cn('w-full caption-bottom text-base', className)}
       {...props}
     />
   </div>
@@ -21,7 +21,7 @@ const TableHeader = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <thead
     ref={ref}
-    className={cn('[&_tr]:border-b', className)}
+    className={cn('bg-[#f3b72b]/20 border-b-2 border-black [&_tr]:border-b-2 [&_tr]:border-black', className)}
     {...props}
   />
 ));
@@ -33,7 +33,7 @@ const TableBody = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <tbody
     ref={ref}
-    className={cn('[&_tr]:border-b [&_tr]:last:border-0', className)}
+    className={cn('[&_tr]:border-b-2 [&_tr]:border-black [&_tr]:last:border-0', className)}
     {...props}
   />
 ));
@@ -45,7 +45,7 @@ const TableFooter = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <tfoot
     ref={ref}
-    className={cn('bg-muted/50 font-medium', className)}
+    className={cn('bg-amber-100 font-bold border-t-2 border-black', className)}
     {...props}
   />
 ));
@@ -58,7 +58,7 @@ const TableRow = React.forwardRef<
   <tr
     ref={ref}
     className={cn(
-      'border-b transition-colors hover:bg-muted/50',
+      'border-b-2 border-black transition-colors hover:bg-amber-50',
       className
     )}
     {...props}
@@ -73,7 +73,7 @@ const TableHead = React.forwardRef<
   <th
     ref={ref}
     className={cn(
-      'h-12 px-4 text-left align-middle font-medium text-muted-foreground',
+      'h-12 px-4 text-left align-middle font-bold text-black uppercase text-sm tracking-wider font-kalam',
       className
     )}
     {...props}
@@ -87,7 +87,7 @@ const TableCell = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <td
     ref={ref}
-    className={cn('p-4 align-middle', className)}
+    className={cn('p-4 align-middle font-medium text-[#1a1a1a]', className)}
     {...props}
   />
 ));

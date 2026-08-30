@@ -2,67 +2,70 @@
 @tailwind components;
 @tailwind utilities;
 
-/*
- * ShadcnUI color tokens — CSS variables that all UI components reference.
- * We define a light theme here; a dark theme can be added by extending
- * with a `.dark` selector.
- */
 @layer base {
   :root {
-    --background:      0 0% 100%;
-    --foreground:      222.2 47.4% 11.2%;
+    --background:      40 33% 98%;
+    --foreground:      0 0% 10%;
     --card:            0 0% 100%;
-    --card-foreground: 222.2 47.4% 11.2%;
+    --card-foreground: 0 0% 10%;
     --popover:         0 0% 100%;
-    --popover-foreground: 222.2 47.4% 11.2%;
-    --primary:         222.2 47.4% 11.2%;
-    --primary-foreground: 0 0% 100%;
-    --secondary:       222.2 47.4% 11.2%;
-    --secondary-foreground: 0 0% 100%;
-    --muted:           210 40% 98%;
-    --muted-foreground: 215.4 16.3% 57%;
-    --accent:          210 40% 98%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --border:          210 40% 96%;
-    --input:           210 40% 96%;
-    --ring:            222.2 47.4% 11.2%;
-    --radius:          0.5rem;
-
-    /* Brand colors (override primary for this project) */
-    --primary:         221.2 83.3% 53.3%;
-    --primary-foreground: 210 40% 98%;
-  }
-
-  .dark {
-    --background:      0 0% 6%;
-    --foreground:      0 0% 93%;
-    --card:            0 0% 10%;
-    --card-foreground: 0 0% 93%;
-    --popover:         0 0% 10%;
-    --popover-foreground: 0 0% 93%;
-    --primary:         221.2 83.3% 53.3%;
-    --primary-foreground: 222.2 87.5% 11.2%;
-    --secondary:       0 0% 15%;
-    --secondary-foreground: 0 0% 93%;
-    --muted:           0 0% 15%;
-    --muted-foreground: 215.4 16.3% 65%;
-    --accent:          0 0% 15%;
-    --accent-foreground: 0 0% 93%;
-    --border:          215.4 32.5% 22%;
-    --input:           215.4 32.5% 22%;
-    --ring:            224.3 76.3% 65%;
+    --popover-foreground: 0 0% 10%;
+    --primary:         43 89% 56%;
+    --primary-foreground: 0 0% 10%;
+    --secondary:       0 0% 100%;
+    --secondary-foreground: 0 0% 10%;
+    --muted:           40 20% 94%;
+    --muted-foreground: 0 0% 40%;
+    --accent:          43 89% 56%;
+    --accent-foreground: 0 0% 10%;
+    --border:          0 0% 0%;
+    --input:           0 0% 0%;
+    --ring:            43 89% 56%;
+    --radius:          0.75rem;
   }
 }
 
-/*
- * Global base styles — every element inherits border-color from
- * the CSS variable so ShadcnUI components can share a consistent border color.
- */
 @layer base {
   * {
-    @apply border-border;
+    border-color: #000000;
+    font-family: var(--font-kalam), 'Kalam', cursive, sans-serif;
   }
   body {
-    @apply bg-background text-foreground;
+    background-color: #fdfbf7;
+    color: #1a1a1a;
+    font-family: var(--font-kalam), 'Kalam', cursive, sans-serif;
   }
 }
+
+/* Custom Doodle & Neobrutalism Helper Utilities */
+.wavy-underline {
+  text-decoration-line: underline;
+  text-decoration-style: wavy;
+  text-decoration-color: #e05252;
+  text-underline-offset: 4px;
+}
+
+.doodle-box {
+  background-color: #ffffff;
+  border: 2.5px solid #000000;
+  box-shadow: 4px 4px 0px 0px #000000;
+  border-radius: 1rem;
+}
+
+.doodle-btn {
+  border: 2px solid #000000;
+  box-shadow: 3px 3px 0px 0px #000000;
+  border-radius: 0.75rem;
+  transition: all 0.15s ease-in-out;
+}
+
+.doodle-btn:hover {
+  transform: translate(1px, 1px);
+  box-shadow: 2px 2px 0px 0px #000000;
+}
+
+.doodle-btn:active {
+  transform: translate(3px, 3px);
+  box-shadow: 0px 0px 0px 0px #000000;
+}
+

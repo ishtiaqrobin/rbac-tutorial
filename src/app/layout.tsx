@@ -12,15 +12,20 @@
  */
 
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Kalam } from 'next/font/google';
 import './globals.css';
 import { AuthProvider } from '@/components/AuthProvider';
 import { Navbar } from '@/components/Navbar';
+import { Footer } from '@/components/Footer';
 
-const inter = Inter({ subsets: ['latin'] });
+const kalam = Kalam({
+  weight: ['300', '400', '700'],
+  subsets: ['latin'],
+  variable: '--font-kalam',
+});
 
 export const metadata: Metadata = {
-  title: 'RBAC Tutorial — Role-Based Access Control Demo',
+  title: 'CRAZY8 RBAC Tutorial — Role-Based Access Control',
   description: 'Demonstrating RBAC with Node.js, PostgreSQL, Next.js, and TailwindCSS'
 };
 
@@ -30,14 +35,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
+    <html lang="en" className={kalam.variable}>
+      <body className={`${kalam.className} bg-[#fdfbf7] text-[#1a1a1a] min-h-screen flex flex-col antialiased selection:bg-[#f3b72b] selection:text-black`}>
         {/* AuthProvider makes user/login/logout available app-wide */}
         <AuthProvider>
           <Navbar />
-          <main className="min-h-screen bg-gray-50 pb-12">
+          <main className="flex-1 bg-[#fdfbf7] pb-12">
             {children}
           </main>
+          <Footer />
         </AuthProvider>
       </body>
     </html>

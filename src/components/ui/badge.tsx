@@ -4,20 +4,16 @@ import { cn } from '@/lib/utils';
 
 const badgeVariants = cva(
   cn(
-    'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold',
-    'transition-colors focus-visible:outline-none focus-visible:ring-2',
-    'focus-visible:ring-ring focus-visible:ring-offset-2'
+    'inline-flex items-center rounded-xl px-3 py-1 text-xs font-bold font-kalam tracking-wide uppercase border-2 border-black transition-all shadow-[2px_2px_0px_0px_#000]'
   ),
   {
     variants: {
       variant: {
-        default:
-          'border-transparent bg-primary text-primary-foreground',
-        secondary:
-          'border-transparent bg-secondary text-secondary-foreground',
-        destructive:
-          'border-transparent bg-destructive text-destructive-foreground',
-        outline: 'text-foreground',
+        default: 'bg-[#f3b72b] text-black',
+        secondary: 'bg-amber-100 text-black',
+        destructive: 'bg-[#e05252] text-white',
+        outline: 'bg-white text-black',
+        dashed: 'border-2 border-dashed border-black bg-transparent text-black shadow-none font-semibold lowercase tracking-normal',
       },
     },
     defaultVariants: {

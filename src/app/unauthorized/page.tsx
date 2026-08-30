@@ -1,6 +1,5 @@
 /**
- * /unauthorized — Shown when the user is authenticated but lacks
- * the role or permission required for a given action.
+ * /unauthorized — Access Denied Page with Doodle Aesthetics
  */
 
 'use client';
@@ -15,22 +14,22 @@ export default function UnauthorizedPage() {
   const { user } = useAuth();
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <Card className="border-destructive/50 max-w-md w-full">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-destructive">
-            <ShieldX className="h-5 w-5" />
-            403 — Access Denied
+    <div className="min-h-[75vh] flex items-center justify-center px-4 font-kalam">
+      <Card className="border-2 border-black shadow-[6px_6px_0px_0px_#000] rounded-2xl bg-white max-w-md w-full">
+        <CardHeader className="bg-red-100 border-b-2 border-black">
+          <CardTitle className="flex items-center gap-2 text-2xl text-[#e05252] font-bold">
+            <ShieldX className="h-6 w-6 text-[#e05252]" />
+            403 — Restricted Access
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <p className="text-sm text-muted-foreground">
+        <CardContent className="space-y-6 pt-6">
+          <p className="text-base text-gray-700 font-medium">
             {user
-              ? `You (${user.email}, role: ${user.role}) are authenticated but do not have the required permissions.`
-              : 'You must be logged in to view this page.'}
+              ? `You (${user.email}, role: ${user.role.toUpperCase()}) are authenticated, but lack granted authorization for this restricted route.`
+              : 'You must log in to access this page.'}
           </p>
-          <Button asChild>
-            <Link href="/dashboard">Go to Dashboard</Link>
+          <Button asChild className="w-full">
+            <Link href="/dashboard">Return to Dashboard</Link>
           </Button>
         </CardContent>
       </Card>

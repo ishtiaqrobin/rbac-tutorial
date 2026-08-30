@@ -29,6 +29,7 @@ export interface User {
   created_at: string;
   updated_at: string;
   role_name?: string;
+  role?: string;
 }
 
 // ─── Auth response (from POST /api/auth/login) ───────────────────────────

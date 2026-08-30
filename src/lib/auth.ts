@@ -77,15 +77,9 @@ export function isAuthenticated(): boolean {
 // ─── API calls ───────────────────────────────────────────────────────────
 
 export async function login(email: string, password: string): Promise<AuthUser> {
-  let response;
-  try {
-    response = await api.post('/auth/sign-in', { email, password });
-  } catch (err) {
-    // Fallback to legacy endpoint if sign-in fails
-    response = await api.post('/auth/login', { email, password });
-  }
-
+  const response = await api.post('/auth/sign-in', { email, password });
   const responseData = response.data;
+
   const token =
     responseData?.data?.accessToken ||
     responseData?.data?.token ||
@@ -119,11 +113,7 @@ export async function logout(): Promise<void> {
   try {
     await api.post('/auth/sign-out');
   } catch {
-    try {
-      await api.post('/auth/logout');
-    } catch {
-      // Ignore network / logout endpoint errors
-    }
+    // Ignore network / logout endpoint errors
   } finally {
     removeToken();
   }

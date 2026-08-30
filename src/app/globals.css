@@ -3,7 +3,66 @@
 @tailwind utilities;
 
 /*
- * Custom styles for the RBAC tutorial.
- * TailwindCSS utility classes handle most styling; this file
- * is for any bespoke rules that are hard to express as utilities.
+ * ShadcnUI color tokens — CSS variables that all UI components reference.
+ * We define a light theme here; a dark theme can be added by extending
+ * with a `.dark` selector.
  */
+@layer base {
+  :root {
+    --background:      0 0% 100%;
+    --foreground:      222.2 47.4% 11.2%;
+    --card:            0 0% 100%;
+    --card-foreground: 222.2 47.4% 11.2%;
+    --popover:         0 0% 100%;
+    --popover-foreground: 222.2 47.4% 11.2%;
+    --primary:         222.2 47.4% 11.2%;
+    --primary-foreground: 0 0% 100%;
+    --secondary:       222.2 47.4% 11.2%;
+    --secondary-foreground: 0 0% 100%;
+    --muted:           210 40% 98%;
+    --muted-foreground: 215.4 16.3% 57%;
+    --accent:          210 40% 98%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --border:          210 40% 96%;
+    --input:           210 40% 96%;
+    --ring:            222.2 47.4% 11.2%;
+    --radius:          0.5rem;
+
+    /* Brand colors (override primary for this project) */
+    --primary:         221.2 83.3% 53.3%;
+    --primary-foreground: 210 40% 98%;
+  }
+
+  .dark {
+    --background:      0 0% 6%;
+    --foreground:      0 0% 93%;
+    --card:            0 0% 10%;
+    --card-foreground: 0 0% 93%;
+    --popover:         0 0% 10%;
+    --popover-foreground: 0 0% 93%;
+    --primary:         221.2 83.3% 53.3%;
+    --primary-foreground: 222.2 87.5% 11.2%;
+    --secondary:       0 0% 15%;
+    --secondary-foreground: 0 0% 93%;
+    --muted:           0 0% 15%;
+    --muted-foreground: 215.4 16.3% 65%;
+    --accent:          0 0% 15%;
+    --accent-foreground: 0 0% 93%;
+    --border:          215.4 32.5% 22%;
+    --input:           215.4 32.5% 22%;
+    --ring:            224.3 76.3% 65%;
+  }
+}
+
+/*
+ * Global base styles — every element inherits border-color from
+ * the CSS variable so ShadcnUI components can share a consistent border color.
+ */
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}

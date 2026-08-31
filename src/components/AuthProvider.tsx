@@ -25,16 +25,22 @@
  * guards, and permission-gated buttons all react instantly.
  */
 
-'use client';  // This component uses useState / useEffect — must be a client component.
+"use client"; // This component uses useState / useEffect — must be a client component.
 
-import React, { createContext, useState, useEffect, useContext, ReactNode } from 'react';
-import { AuthUser } from '../types';
+import React, {
+  createContext,
+  useState,
+  useEffect,
+  useContext,
+  ReactNode,
+} from "react";
+import { AuthUser } from "../types";
 import {
   getCurrentUser,
   fetchCurrentUser,
   login as apiLogin,
   logout as apiLogout,
-} from '../lib/auth';
+} from "../lib/auth";
 
 // ─── Context shape ────────────────────────────────────────────────────────
 interface AuthContextType {
@@ -105,7 +111,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login: handleLogin, logout: handleLogout }}>
+    <AuthContext.Provider
+      value={{ user, loading, login: handleLogin, logout: handleLogout }}
+    >
       {children}
     </AuthContext.Provider>
   );
@@ -115,7 +123,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 export function useAuth() {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 }

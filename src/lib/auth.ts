@@ -2,15 +2,15 @@
  * auth.ts — Frontend authentication & authorization helpers
  */
 
-import api from './api';
-import { AuthUser } from '../types';
+import api from "./api";
+import { AuthUser } from "../types";
 
-const TOKEN_KEY = 'token';
+const TOKEN_KEY = "token";
 
 function decodeJwt(token: string): any {
   try {
-    const payload = token.split('.')[1];
-    const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
+    const payload = token.split(".")[1];
+    const base64 = payload.replace(/-/g, "+").replace(/_/g, "/");
     const decoded = atob(base64);
     return JSON.parse(decoded);
   } catch {
@@ -19,20 +19,20 @@ function decodeJwt(token: string): any {
 }
 
 export function setToken(token: string): void {
-  if (typeof window !== 'undefined') {
+  if (typeof window !== "undefined") {
     localStorage.setItem(TOKEN_KEY, token);
   }
 }
 
 export function getToken(): string | null {
-  if (typeof window !== 'undefined') {
+  if (typeof window !== "undefined") {
     return localStorage.getItem(TOKEN_KEY);
   }
   return null;
 }
 
 export function removeToken(): void {
-  if (typeof window !== 'undefined') {
+  if (typeof window !== "undefined") {
     localStorage.removeItem(TOKEN_KEY);
   }
 }
@@ -49,10 +49,10 @@ export function getCurrentUser(): AuthUser | null {
 
   return {
     id: userId,
-    email: payload.email || '',
-    name: payload.name || payload.username || '',
-    username: payload.username || payload.name || '',
-    role: payload.role || 'viewer',
+    email: payload.email || "",
+    name: payload.name || payload.username || "",
+    username: payload.username || payload.name || "",
+    role: payload.role || "viewer",
     roleId: payload.roleId,
     permissions: payload.permissions || [],
   };
@@ -83,15 +83,15 @@ export function isAuthenticated(): boolean {
  */
 export async function fetchCurrentUser(): Promise<AuthUser | null> {
   try {
-    const response = await api.get('/auth/me');
+    const response = await api.get("/auth/me");
     const rawUser = response.data?.data?.user || response.data?.user;
     if (!rawUser) return null;
 
     return {
       id: rawUser.id,
       email: rawUser.email,
-      name: rawUser.name || rawUser.username || '',
-      username: rawUser.username || rawUser.name || '',
+      name: rawUser.name || rawUser.username || "",
+      username: rawUser.username || rawUser.name || "",
       role: rawUser.role,
       roleId: rawUser.roleId || rawUser.role_id,
       permissions: rawUser.permissions || [],
@@ -103,8 +103,11 @@ export async function fetchCurrentUser(): Promise<AuthUser | null> {
 
 // ─── API calls ───────────────────────────────────────────────────────────
 
-export async function login(email: string, password: string): Promise<AuthUser> {
-  const response = await api.post('/auth/sign-in', { email, password });
+export async function login(
+  email: string,
+  password: string,
+): Promise<AuthUser> {
+  const response = await api.post("/auth/sign-in", { email, password });
   const responseData = response.data;
 
   const token =
@@ -121,8 +124,8 @@ export async function login(email: string, password: string): Promise<AuthUser> 
     const authUser: AuthUser = {
       id: rawUser.id,
       email: rawUser.email,
-      name: rawUser.name || rawUser.username || '',
-      username: rawUser.username || rawUser.name || '',
+      name: rawUser.name || rawUser.username || "",
+      username: rawUser.username || rawUser.name || "",
       role: rawUser.role,
       roleId: rawUser.roleId || rawUser.role_id,
       permissions: rawUser.permissions || [],
@@ -133,12 +136,12 @@ export async function login(email: string, password: string): Promise<AuthUser> 
   const decoded = getCurrentUser();
   if (decoded) return decoded;
 
-  throw new Error('Authentication succeeded but user payload is missing.');
+  throw new Error("Authentication succeeded but user payload is missing.");
 }
 
 export async function logout(): Promise<void> {
   try {
-    await api.post('/auth/sign-out');
+    await api.post("/auth/sign-out");
   } catch {
     // Ignore network / logout endpoint errors
   } finally {

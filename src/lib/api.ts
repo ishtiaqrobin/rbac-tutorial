@@ -38,7 +38,7 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       if (typeof window !== 'undefined') {
         localStorage.removeItem('token');
-        // Only redirect if not already on login page
+        // Only redirect if not already on login page (avoids redirect loops)
         if (!window.location.pathname.startsWith('/login')) {
           window.location.href = '/login';
         }

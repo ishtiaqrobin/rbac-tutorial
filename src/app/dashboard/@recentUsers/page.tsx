@@ -21,7 +21,7 @@ export default function RecentUsersPanel() {
 
   useEffect(() => {
     api.get('/users')
-      .then((res) => setUsers(res.data.users))
+      .then((res) => setUsers(res.data?.data?.users || res.data?.users || []))
       .catch(() => setUsers([]))
       .finally(() => setLoading(false));
   }, []);
@@ -46,11 +46,11 @@ export default function RecentUsersPanel() {
         {users.slice(0, 5).map((u) => (
           <div key={u.id} className="flex items-center justify-between p-3 border-2 border-black rounded-xl bg-amber-50/60 shadow-[2px_2px_0px_0px_#000]">
             <div>
-              <p className="font-bold text-base text-[#1a1a1a]">{u.username}</p>
+              <p className="font-bold text-base text-[#1a1a1a]">{u.name || u.username || u.email.split('@')[0]}</p>
               <p className="text-xs text-gray-600 font-mono">{u.email}</p>
             </div>
-            <Badge variant={u.is_active ? 'default' : 'secondary'} className="text-xs">
-              {u.is_active ? 'Active' : 'Inactive'}
+            <Badge variant={u.isActive ?? u.is_active ? 'default' : 'secondary'} className="text-xs">
+              {u.isActive ?? u.is_active ? 'Active' : 'Inactive'}
             </Badge>
           </div>
         ))}

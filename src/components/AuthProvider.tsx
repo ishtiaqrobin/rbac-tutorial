@@ -29,7 +29,12 @@
 
 import React, { createContext, useState, useEffect, useContext, ReactNode } from 'react';
 import { AuthUser } from '../types';
-import { getCurrentUser, login as apiLogin, logout as apiLogout } from '../lib/auth';
+import {
+  getCurrentUser,
+  fetchCurrentUser,
+  login as apiLogin,
+  logout as apiLogout,
+} from '../lib/auth';
 
 // ─── Context shape ────────────────────────────────────────────────────────
 interface AuthContextType {
@@ -48,22 +53,40 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // On mount: check localStorage for an existing session.
+  // On mount: check for an existing session.
+  // 1. Try the backend `/me` endpoint (uses HTTP-Only cookies set on sign-in).
+  // 2. Fall back to the decoded JWT stored in localStorage.
   useEffect(() => {
-    const stored = getCurrentUser();
-    if (stored) {
-      setUser(stored);
-    }
-    setLoading(false);
+    let cancelled = false;
+
+    (async () => {
+      // Prefer the server-side session (HTTP-Only cookie) for accuracy.
+      const serverUser = await fetchCurrentUser();
+      if (cancelled) return;
+
+      if (serverUser) {
+        setUser(serverUser);
+      } else {
+        // Fall back to the localStorage JWT (legacy / offline path).
+        const stored = getCurrentUser();
+        if (stored) setUser(stored);
+      }
+      setLoading(false);
+    })();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   /**
    * login():
-   *   1. Calls the backend (POST /auth/login).
-   *   2. The backend stores the JWT in the response.
-   *   3. apiLogin() writes the token to localStorage.
-   *   4. We call getCurrentUser() again to read the freshly-decoded
-   *      payload and update React state.
+   *   1. Calls the backend (POST /auth/sign-in).
+   *   2. The backend sets HTTP-Only cookies (session + JWT) and returns the
+   *      user profile + access token.
+   *   3. apiLogin() stores the access token in localStorage (backup) and
+   *      returns the user object.
+   *   4. We update React state.
    */
   const handleLogin = async (email: string, password: string) => {
     const authUser = await apiLogin(email, password);
@@ -72,7 +95,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   /**
    * logout():
-   *   1. apiLogout() removes the token from localStorage.
+   *   1. apiLogout() calls the backend to clear the session + removes the
+   *      token from localStorage.
    *   2. We reset React state so all consumers re-render.
    */
   const handleLogout = () => {

@@ -4,6 +4,7 @@
 
 'use client';
 
+import { useState } from 'react';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { PermissionGate } from '@/components/PermissionGate';
 import { RoleGuard } from '@/components/RoleGuard';
@@ -11,8 +12,34 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import api from '@/lib/api';
 
 export default function EditorPage() {
+  const [title, setTitle] = useState('');
+  const [body, setBody] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
+  const handleCreate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitting(true);
+    setMessage(null);
+
+    try {
+      await api.post('/contents', { title, body });
+      setMessage({ type: 'success', text: '✅ Article published successfully!' });
+      setTitle('');
+      setBody('');
+    } catch (err: any) {
+      setMessage({
+        type: 'error',
+        text: err.response?.data?.message || 'Failed to publish article.',
+      });
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <ProtectedRoute>
       <RoleGuard allowedRoles={['admin', 'editor']}>
@@ -39,17 +66,35 @@ export default function EditorPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-6">
-                <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
+                {message && (
+                  <div className={`mb-4 p-3 border-2 border-black rounded-xl text-sm font-bold shadow-[2px_2px_0px_0px_#000] ${
+                    message.type === 'success' ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-[#e05252]'
+                  }`}>
+                    {message.text}
+                  </div>
+                )}
+                <form onSubmit={handleCreate} className="space-y-4">
                   <div>
                     <label className="block text-base font-bold mb-1 text-[#1a1a1a]">Article Title</label>
-                    <Input placeholder="Enter title for your article..." />
+                    <Input
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                      placeholder="Enter title for your article..."
+                      required
+                    />
                   </div>
                   <div>
                     <label className="block text-base font-bold mb-1 text-[#1a1a1a]">Article Content Body</label>
-                    <Textarea placeholder="Write your content here..." rows={5} />
+                    <Textarea
+                      value={body}
+                      onChange={(e) => setBody(e.target.value)}
+                      placeholder="Write your content here..."
+                      rows={5}
+                      required
+                    />
                   </div>
-                  <Button type="submit" className="w-full text-lg">
-                    ✨ Publish Article Now
+                  <Button type="submit" className="w-full text-lg" disabled={submitting}>
+                    {submitting ? '⏳ Publishing...' : '✨ Publish Article Now'}
                   </Button>
                 </form>
               </CardContent>

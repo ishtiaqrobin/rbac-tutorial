@@ -74,6 +74,33 @@ export function isAuthenticated(): boolean {
   return getCurrentUser() !== null;
 }
 
+/**
+ * fetchCurrentUser — fetch the authenticated user from the backend `/me`
+ * endpoint. This relies on the HTTP-Only session/JWT cookies that the backend
+ * sets on sign-in, so it works even if localStorage was cleared.
+ *
+ * Returns null if the user is not authenticated (401).
+ */
+export async function fetchCurrentUser(): Promise<AuthUser | null> {
+  try {
+    const response = await api.get('/auth/me');
+    const rawUser = response.data?.data?.user || response.data?.user;
+    if (!rawUser) return null;
+
+    return {
+      id: rawUser.id,
+      email: rawUser.email,
+      name: rawUser.name || rawUser.username || '',
+      username: rawUser.username || rawUser.name || '',
+      role: rawUser.role,
+      roleId: rawUser.roleId || rawUser.role_id,
+      permissions: rawUser.permissions || [],
+    };
+  } catch {
+    return null;
+  }
+}
+
 // ─── API calls ───────────────────────────────────────────────────────────
 
 export async function login(email: string, password: string): Promise<AuthUser> {
